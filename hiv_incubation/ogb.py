@@ -4,6 +4,7 @@ from torch.utils.data import Subset
 from ogb.graphproppred import Evaluator
 
 
+# isjdfjksfsjk
 def load_data():
     # Download and process data at './dataset/ogbg_molhiv/'
     dataset = PygGraphPropPredDataset(name="ogbg-molhiv")
