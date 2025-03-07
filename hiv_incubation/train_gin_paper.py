@@ -33,6 +33,7 @@ def test(loader):
 
     y_true = torch.cat(y_true, dim=0)
     y_pred = torch.cat(y_pred, dim=0)
+    y_pred = torch.sigmoid(y_pred)  # maybe delete
     result = evaluate(y_true, y_pred)
     return result
 
@@ -50,19 +51,20 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = GINModel(
         in_channels=dataset.num_features,
-        hidden_channels=128,
-        out_channels=64,
-        num_layers=4,
+        hidden_channels=64,
+        out_channels=32,
+        num_layers=2,
     )
     model = model.to(device)
     model.apply(init_weights)  # <-- Apply initialization here
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     # optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
     loss_func = nn.BCEWithLogitsLoss()
+    # maybe try nn.NLLLoss() with log_softmax output
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="max", factor=0.5, patience=10
+        optimizer, mode="max", factor=0.5, patience=5
     )
-    print(f"increase num_layers to 4")  # got 73.76
+    print(f"added residual connections")
     for epoch in range(1, 101):
         loss = train(train_loader)
         if epoch % 10 == 0:

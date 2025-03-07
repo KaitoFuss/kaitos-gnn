@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn import GIN, global_mean_pool
+from torch_geometric.nn import GIN, global_add_pool, global_mean_pool
 
 
 class GINModel(torch.nn.Module):
@@ -15,6 +15,6 @@ class GINModel(torch.nn.Module):
         edge_index = edge_index.long()
         x = x.float()
         x = self.gin(x, edge_index)
-        x = global_mean_pool(x, data.batch)
+        x = global_add_pool(x, data.batch)
         x = self.fc(x)
         return x
