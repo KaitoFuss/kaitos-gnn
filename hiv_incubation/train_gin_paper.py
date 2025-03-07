@@ -64,7 +64,7 @@ if __name__ == "__main__":
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="max", factor=0.5, patience=5
     )
-    print(f"added residual connections")
+    print(f"first params")  # got ROC-AUC of 0.75
     for epoch in range(1, 101):
         loss = train(train_loader)
         if epoch % 10 == 0:

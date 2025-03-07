@@ -36,7 +36,7 @@ class GINModel(torch.nn.Module):
         x = x.float()
         for conv, batch_norm in zip(self.convs, self.batch_norms):
             # x_res = x
-            x = F.leaky_relu(batch_norm(conv(x, edge_index)))
+            x = F.relu(batch_norm(conv(x, edge_index)))
             # Add residual connection
             # x = x + x_res  # Add the residual connection (skip connection)
         x = global_add_pool(x, batch)
