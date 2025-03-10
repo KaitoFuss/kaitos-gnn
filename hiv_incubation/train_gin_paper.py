@@ -1,5 +1,5 @@
 from ogb_helper import load_data, split_data, evaluate
-from gin_pyg_class import GINModel
+from gin.gin_paper_impl import GINModel
 import torch.optim as optim
 import torch.nn as nn
 import torch
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     model = GINModel(
         in_channels=dataset.num_features,
         hidden_channels=64,
-        out_channels=32,
+        out_channels=1,
         num_layers=2,
     )
     model = model.to(device)
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="max", factor=0.5, patience=5
     )
-    print(f"deleted weight decay, ie regularization")  # got ROC-AUC of 0.75
+    print(f"Benchmark")  # got ROC-AUC of 0.79
     best_val_roc_auc = 0
     for epoch in range(1, 101):
         loss = train(train_loader)
@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 patience_counter += 1  # Increment patience counter if no improvement
 
             # Stop training if patience runs out
-            if patience_counter >= 5:
+            if patience_counter >= 5 or best_val_roc_auc > 0.8:
                 print(f"Early stopping at epoch {epoch} due to no improvement.")
                 break  # Stop training
 

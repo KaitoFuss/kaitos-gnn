@@ -1,5 +1,5 @@
 from ogb_helper import load_data, split_data, evaluate
-from simple_gcn import GCN
+from first_tries.simple_gcn import GCN
 import torch.optim as optim
 import torch.nn as nn
 import torch
