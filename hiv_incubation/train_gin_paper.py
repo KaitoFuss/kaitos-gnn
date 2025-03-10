@@ -64,7 +64,8 @@ if __name__ == "__main__":
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="max", factor=0.5, patience=5
     )
-    print(f"first params")  # got ROC-AUC of 0.75
+    print(f"deleted weight decay, ie regularization")  # got ROC-AUC of 0.75
+    best_val_roc_auc = 0
     for epoch in range(1, 101):
         loss = train(train_loader)
         if epoch % 10 == 0:
@@ -74,6 +75,17 @@ if __name__ == "__main__":
                 f"Val ROC-AUC: {val_acc['rocauc']:.4f}"
             )
             scheduler.step(val_acc["rocauc"])
+            # Early stopping
+            if val_acc["rocauc"] > best_val_roc_auc:
+                best_val_roc_auc = val_acc["rocauc"]
+                patience_counter = 0  # Reset patience if ROC-AUC improves
+            else:
+                patience_counter += 1  # Increment patience counter if no improvement
+
+            # Stop training if patience runs out
+            if patience_counter >= 5:
+                print(f"Early stopping at epoch {epoch} due to no improvement.")
+                break  # Stop training
 
     test_acc = test(test_loader)
     print(f"Training has been finished. Testing ROC-AUC: {test_acc['rocauc']:.4f}")
