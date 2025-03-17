@@ -1,5 +1,5 @@
 from ogb_helper import load_data, split_data, evaluate
-from gcn.gcn_paper_impl import *
+from gcn.gcn_paper_impl import GCNModel
 import torch.optim as optim
 import torch.nn as nn
 import torch
@@ -49,15 +49,16 @@ if __name__ == "__main__":
     dataset = load_data()
     train_loader, valid_loader, test_loader = split_data(dataset)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = GINModel(
+    model = GCNModel(
         in_channels=dataset.num_features,
         hidden_channels=64,
         out_channels=32,
-        num_layers=2,
+        num_layers=3,
+        dropout=0.5,
     )
     model = model.to(device)
     model.apply(init_weights)  # <-- Apply initialization here
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
     # optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
     loss_func = nn.BCEWithLogitsLoss()
     # maybe try nn.NLLLoss() with log_softmax output
@@ -66,6 +67,7 @@ if __name__ == "__main__":
     )
     print(f"Benchmark")  # got ROC-AUC of 0.75
     best_val_roc_auc = 0
+    patience_counter = 0
     for epoch in range(1, 101):
         loss = train(train_loader)
         if epoch % 10 == 0:

@@ -83,7 +83,7 @@ if __name__ == "__main__":
                 patience_counter += 1  # Increment patience counter if no improvement
 
             # Stop training if patience runs out
-            if patience_counter >= 5 or best_val_roc_auc > 0.8:
+            if patience_counter >= 5:
                 print(f"Early stopping at epoch {epoch} due to no improvement.")
                 break  # Stop training
 
