@@ -58,14 +58,14 @@ if __name__ == "__main__":
     )
     model = model.to(device)
     model.apply(init_weights)  # <-- Apply initialization here
-    optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
     # optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
     loss_func = nn.BCEWithLogitsLoss()
     # maybe try nn.NLLLoss() with log_softmax output
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="max", factor=0.5, patience=5
     )
-    print(f"Benchmark")  # got ROC-AUC of 0.75
+    print(f"no residuals")  # got ROC-AUC of 0.75
     best_val_roc_auc = 0
     patience_counter = 0
     for epoch in range(1, 101):

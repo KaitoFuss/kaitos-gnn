@@ -36,8 +36,13 @@ class GCNModel(torch.nn.Module):
         edge_index = edge_index.long()
         x = x.float()
 
-        for conv, batch_norm in zip(self.convs[:-1], self.batch_norms[:-1]):
-            x_residual = x
+        x = self.convs[0](x, edge_index)
+        x = self.batch_norms[0](x)
+        x = F.relu(x)
+        x = self.dropout(x)
+
+        for conv, batch_norm in zip(self.convs[1:-1], self.batch_norms[1:]):
+            x_residual = 0
             x = conv(x, edge_index)
             x = batch_norm(x)
             x = F.relu(x) + x_residual  # Residual connection
